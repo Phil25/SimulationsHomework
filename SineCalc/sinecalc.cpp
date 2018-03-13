@@ -2,24 +2,43 @@
 
 #define PI 3.14159265359
 
+const double conversion = PI/180;
 const double twoPi = 2*PI;
 const double halfPi = PI/2;
-const double quarterPi = halfPi/2;
 
-double floor(double x){
+inline double floor(double x){
 	return (int)(x > 0 ? x : x -0.99999);
 }
 
-double mod(double x, double div){
+inline double mod(double x, double div){
 	return (x -div *floor(x/div));
 }
 
-void optimizeArg(double& arg){
-	arg = mod(arg, PI);
+// returns whether result should be inverted
+int optimizeArg(double& arg){
+	int flip = 1;
+
+	// limit arg to range 0, 2PI
+	arg = mod(arg, twoPi);
+
+	// limit arg to range 0, PI
+	// set the flip flag
+	if(arg > PI){
+		arg -= PI;
+		flip *= -1;
+	}
+
+	// limit arg to range 0, PI/2
+	if(arg > halfPi){
+		arg -= 2*(arg -halfPi);
+	}
+
+	// return the flip flag
+	return flip;
 }
 
 double sin(double arg, int precision){
-	optimizeArg(arg);
+	int flip = optimizeArg(arg);
 	double result = 0.0;
 
 	// starting values
@@ -43,20 +62,45 @@ double sin(double arg, int precision){
 		factorial *= (val +2) *(val +3);	// (val +1) *(val +2)
 	}
 
-	return result;
+	return result *flip;
 }
 
 int main(){
-	double argument;
-	int precision;
 
+	int option = 1;
+	int precision = 1;
+	double argument = 1.0;
+
+	// read radians/degrees option
+	std::cout << "Use (1) radians or (2) degrees? [1/2] ";
+	std::cin >> option;
+	std::cout << "Chose " << (option == 1 ? "radians" : "degrees") << "." << std::endl;
+
+	// read argument and precision
 	std::cout << "Enter X and precison value:" << std::endl;
 	std::cin >> argument >> precision;
-	std::cout << "sin(" << argument << ") = " << sin(argument, precision) << std::endl;
+	double radians = argument;
+
+	// convert to radians
+	if(option == 2)
+		radians *= conversion;
+
+	// calculate
+	std::cout << "sin(" << argument << ") = " << sin(radians, precision) << std::endl;
+
+	// stress test
+	if(false){
+		int i = -10;
+		while(i < 10){
+			std::cout << "sin(" << i << ") = " << sin(i, 6) << std::endl;
+			i++;
+		}
+	}
 
 	return 0;
 }
 
+// legacy testing code
 /*double pow(double x, int exp){
 	double result = 1;
 	while(exp-- > 0)
