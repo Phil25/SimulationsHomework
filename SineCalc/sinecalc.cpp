@@ -16,7 +16,7 @@ inline double mod(double x, double div){
 
 // returns whether result should be inverted
 int optimizeArg(double& arg){
-	int flip = 1;
+	int should_flip = 1;
 
 	// limit arg to range 0, 2PI
 	arg = mod(arg, twoPi);
@@ -25,7 +25,7 @@ int optimizeArg(double& arg){
 	// set the flip flag
 	if(arg > PI){
 		arg -= PI;
-		flip *= -1;
+		should_flip *= -1;
 	}
 
 	// limit arg to range 0, PI/2
@@ -34,15 +34,15 @@ int optimizeArg(double& arg){
 	}
 
 	// return the flip flag
-	return flip;
+	return should_flip;
 }
 
 double sin(double arg, int precision){
-	int flip = optimizeArg(arg);
+	int should_flip = optimizeArg(arg);
 	double result = 0.0;
 
 	// starting values
-	int add = 1;
+	int add = should_flip;
 	double power = arg;
 	double factorial = 1;
 
@@ -62,7 +62,7 @@ double sin(double arg, int precision){
 		factorial *= (val +2) *(val +3);	// (val +1) *(val +2)
 	}
 
-	return result *flip;
+	return result;
 }
 
 int main(){
@@ -86,6 +86,7 @@ int main(){
 		radians *= conversion;
 
 	// calculate
+	std::cout.precision(17);
 	std::cout << "sin(" << argument << ") = " << sin(radians, precision) << std::endl;
 
 	// stress test
