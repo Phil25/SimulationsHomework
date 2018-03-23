@@ -65,8 +65,7 @@ double sin(double arg, int precision){
 	return result;
 }
 
-int main(){
-
+void core_loop(){
 	int option = 1;
 	int precision = 1;
 	double argument = 1.0;
@@ -86,17 +85,16 @@ int main(){
 		radians *= conversion;
 
 	// calculate
+	std::cout.precision(6);
+	std::cout << "sin(" << argument << (option == 1 ? "rad" : "deg") << ") = ";
 	std::cout.precision(17);
-	std::cout << "sin(" << argument << ") = " << sin(radians, precision) << std::endl;
+	std::cout << sin(radians, precision);
+	std::cout << std::endl << std::endl;
+}
 
-	// stress test
-	if(false){
-		int i = -10;
-		while(i < 10){
-			std::cout << "sin(" << i << ") = " << sin(i, 6) << std::endl;
-			i++;
-		}
-	}
+int main(){
+	while(1)
+		core_loop();
 
 	return 0;
 }
