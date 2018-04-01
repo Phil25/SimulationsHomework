@@ -11,6 +11,8 @@ Y(y)
 	glutMainLoop();
 }
 
+// private
+
 void psm_window::init() const{
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	glColor3f(0.0, 0.0, 0.0);
@@ -25,10 +27,20 @@ void psm_window::draw(const vec2& p1, const vec2& p2) const{
 	glVertex2f(p2.x, p2.y);
 }
 
+vec2 psm_window::get_circle_vec2(const vec2& o, float r, float ang) const{
+	return vec2{o.x + r *cos(ang), o.y + r *sin(ang)};
+}
+
+// public
+
 void psm_window::draw_line(const vec2& p1, const vec2& p2) const{
 	glBegin(GL_LINES);
 	draw(p1, p2);
 	glEnd();
+}
+
+void psm_window::draw_vector(const vec2& o, const vec2& dir){
+	this->draw_line(o, vec2{o.x +dir.x, o.y +dir.y});
 }
 
 void psm_window::draw_square(const vec2& a, GLint len) const{
@@ -62,6 +74,11 @@ void psm_window::draw_circle(const vec2& o, GLint r, float roll, int q) const{
 	glEnd();
 }
 
-vec2 psm_window::get_circle_vec2(const vec2& o, float r, float ang) const{
-	return vec2{o.x + r *cos(ang), o.y + r *sin(ang)};
+float psm_window::get_vector_length(const vec2& v){
+	return std::sqrt(v.x*v.x + v.y*v.y);
 }
+
+vec2 psm_window::normalize_vector(const vec2& v){
+	float len = psm_window::get_vector_length(v);
+	return vec2{v.x/len, v.y/len};
+};

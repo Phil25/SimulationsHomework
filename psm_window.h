@@ -19,9 +19,13 @@ public:
 	psm_window(const char* name, const unsigned int x, const unsigned int y, void (*display)(void));
 
 	void draw_line(const vec2&, const vec2&) const;
+	void draw_vector(const vec2&, const vec2& direction);
 	void draw_square(const vec2&, GLint len) const;
 	void draw_circle(const vec2&, GLint rad, int quality=16) const;
 	void draw_circle(const vec2&, GLint rad, float roll, int quality=16) const;
+
+	static float get_vector_length(const vec2&);
+	static vec2 normalize_vector(const vec2&);
 
 private:
 	void init() const;
