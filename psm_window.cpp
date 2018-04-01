@@ -40,7 +40,9 @@ void psm_window::draw_line(const vec2& p1, const vec2& p2) const{
 }
 
 void psm_window::draw_vector(const vec2& o, const vec2& dir){
-	this->draw_line(o, vec2{o.x +dir.x, o.y +dir.y});
+	vec2 o2{o.x +dir.x, o.y +dir.y};
+	this->draw_line(o, o2);
+	this->draw_square(vec2{o2.x -5, o2.y -5}, 10);
 }
 
 void psm_window::draw_square(const vec2& a, GLint len) const{
