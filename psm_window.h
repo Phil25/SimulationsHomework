@@ -27,9 +27,9 @@ public:
 
 	void draw_line(const vec2&, const vec2&) const;
 	void draw_vector(const vec2&, const vec2& direction);
-	void draw_square(const vec2&, GLint len) const;
-	void draw_circle(const vec2&, GLint rad, int quality=16) const;
-	void draw_circle(const vec2&, GLint rad, float roll, int quality=16) const;
+	void draw_square(const vec2&, float len) const;
+	void draw_circle(const vec2&, float rad, int quality=0) const;
+	void draw_circle(const vec2&, float rad, float roll, int quality=0) const;
 	void draw_text(const vec2&, const char*);
 	void draw_text(const vec2&, const std::string);
 

@@ -45,7 +45,7 @@ void psm_window::draw_vector(const vec2& o, const vec2& dir){
 	this->draw_square(vec2{o2.x -5, o2.y -5}, 10);
 }
 
-void psm_window::draw_square(const vec2& a, GLint len) const{
+void psm_window::draw_square(const vec2& a, float len) const{
 	vec2	b = {a.x +len, a.y},
 			c = {b.x, b.y +len},
 			d = {c.x -len, c.y};
@@ -57,12 +57,13 @@ void psm_window::draw_square(const vec2& a, GLint len) const{
 	glEnd();
 }
 
-void psm_window::draw_circle(const vec2& o, GLint r, int q) const{
+void psm_window::draw_circle(const vec2& o, float r, int q) const{
 	this->draw_circle(o, r, 0.0f, q);
 }
 
-void psm_window::draw_circle(const vec2& o, GLint r, float roll, int q) const{
+void psm_window::draw_circle(const vec2& o, float r, float roll, int q) const{
 	glBegin(GL_LINES);
+	q = q < 50 ? 32 : q;
 	const float step = PI2 /q;
 	float ang = roll;
 	vec2 last = get_circle_vec2(o, r, ang);
