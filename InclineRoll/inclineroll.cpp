@@ -1,10 +1,11 @@
 #include "../psm.h"
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 #define WINDOW_X 640
 #define WINDOW_Y 640
-#define PPM 25 // pixels per meter
+#define PPM 1 // pixels per meter
 
 #define TO_RAD(x) x *PI /180
 
@@ -12,14 +13,14 @@
 #define I_BALL 2 *mass *radius *radius /5
 
 #define PLANE_LENGTH 1000
-#define BALL_START 600
+#define BALL_START 700
 
 // input constants
 const float dt = 0.01;
 const float g = -9.81 *PPM;
-const float radius = 50;
+const float radius = 25;
 const float mass = 1;
-const float ang_deg = 20;
+const float ang_deg = 45;
 const float beta_deg = 90;
 const float I = I_CYLINDER;
 
@@ -53,6 +54,11 @@ vec2 pos = ball_position;
 vec2 vel = {0, 0};
 float beta = TO_RAD(beta_deg);
 float omega = 0;
+int frame = 0;
+
+// path-drawing
+std::vector<vec2> positions;
+std::vector<vec2> rpositions;
 
 std::string display_velocity(){
 	std::ostringstream oss;
@@ -83,9 +89,12 @@ std::string display_penergy(){
 }
 
 void render(psm_window* w){
-	// draw the circle object
-	w->draw_circle(pos, radius);
-	w->draw_circle(pos, 5, 4);
+
+	// draw rotation graph
+	w->draw_graph(rpositions);
+
+	// draw path graph
+	w->draw_path(positions);
 
 	// draw the plane
 	w->draw_line(plane_start, plane_end);
@@ -96,6 +105,13 @@ void render(psm_window* w){
 	psm::print(display_kenergy());
 	psm::print(display_penergy());
 
+	if(pos.y <= radius)
+		return;
+
+	// draw the circle object
+	w->draw_circle(pos, radius);
+	w->draw_circle(pos, 5, 4);
+
 	// calculate rotational angle
 	omega += epsilon *dt;
 	beta -= omega *dt;
@@ -105,11 +121,14 @@ void render(psm_window* w){
 	vec2 r2pos = {pos.x -cos(beta) *radius, pos.y -sin(beta) *radius};
 	w->draw_line(r1pos, r2pos);
 
+	// cache positions for the graph
+	if(frame++ % 10 == 0){
+		positions.push_back(pos);
+		rpositions.push_back(r2pos);
+	}
+
 	// draw velocity vector
 	w->draw_vector(pos, vel);
-
-	if(pos.y <= radius)
-		return;
 
 	// translate position
 	pos.x += vel.x *dt;

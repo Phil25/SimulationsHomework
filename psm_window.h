@@ -1,6 +1,7 @@
 #include <GL/glut.h>
 #include <math.h>
 #include <cstring>
+#include <vector>
 #include <string>
 
 #define PI 3.1415926535f
@@ -30,8 +31,10 @@ public:
 	void draw_square(const vec2&, float len) const;
 	void draw_circle(const vec2&, float rad, int quality=0) const;
 	void draw_circle(const vec2&, float rad, float roll, int quality=0) const;
-	void draw_text(const vec2&, const char*);
-	void draw_text(const vec2&, const std::string);
+	void draw_text(const vec2&, const char*) const;
+	void draw_text(const vec2&, const std::string) const;
+	void draw_graph(const std::vector<vec2>& vecs) const;
+	void draw_path(const std::vector<vec2>& vecs) const;
 
 	static float get_vector_length(const vec2&);
 	static float get_vector_distance(const vec2&, const vec2&);

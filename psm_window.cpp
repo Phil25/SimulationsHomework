@@ -77,16 +77,32 @@ void psm_window::draw_circle(const vec2& o, float r, float roll, int q) const{
 	glEnd();
 }
 
-void psm_window::draw_text(const vec2& pos, const char* text){
+void psm_window::draw_text(const vec2& pos, const char* text) const{
 	glRasterPos2f(pos.x, pos.y);
 	int len = std::strlen(text);
 	for(int i = 0; i < len; i++)
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
 }
 
-void psm_window::draw_text(const vec2& pos, std::string text){
+void psm_window::draw_text(const vec2& pos, std::string text) const{
 	this->draw_text(pos, text.c_str());
 }
+
+void psm_window::draw_graph(const std::vector<vec2>& vecs) const{
+	int len = vecs.size();
+	if(len < 1) return;
+	for(int i = 1; i < len; i++)
+		this->draw_line(vecs[i], vecs[i-1]);
+}
+
+void psm_window::draw_path(const std::vector<vec2>& vecs) const{
+	int len = vecs.size();
+	if(len < 1) return;
+	for(int i = 1; i < len; i++)
+		this->draw_circle(vecs[i], 2, 4);
+}
+
+// static
 
 float psm_window::get_vector_length(const vec2& v){
 	return std::sqrt(v.x*v.x + v.y*v.y);
