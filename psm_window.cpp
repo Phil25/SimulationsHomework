@@ -76,8 +76,25 @@ void psm_window::draw_circle(const vec2& o, GLint r, float roll, int q) const{
 	glEnd();
 }
 
+void psm_window::draw_text(const vec2& pos, const char* text){
+	glRasterPos2f(pos.x, pos.y);
+	int len = std::strlen(text);
+	for(int i = 0; i < len; i++)
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
+}
+
+void psm_window::draw_text(const vec2& pos, std::string text){
+	this->draw_text(pos, text.c_str());
+}
+
 float psm_window::get_vector_length(const vec2& v){
 	return std::sqrt(v.x*v.x + v.y*v.y);
+}
+
+float psm_window::get_vector_distance(const vec2& v1, const vec2& v2){
+	float dx = v2.x -v1.x;
+	float dy = v2.y -v1.y;
+	return std::sqrt(dx*dx + dy*dy);
 }
 
 vec2 psm_window::normalize_vector(const vec2& v){

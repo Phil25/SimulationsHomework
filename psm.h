@@ -5,7 +5,10 @@
 void render(psm_window*);
 
 namespace psm{
-	psm_window* window;
+	psm_window* w = nullptr;
+	const float line_diff = 24;
+	float line_offset;
+	int X, Y;
 
 	void game_loop(int dt){
 		glutPostRedisplay();
@@ -14,14 +17,25 @@ namespace psm{
 
 	void display(void){
 		glClear(GL_COLOR_BUFFER_BIT);
-		render(window);
+		render(w);
+		line_offset = Y; // reset printing offset
 		glFlush();
+	}
+
+	void print(std::string text){
+		line_offset -= line_diff;
+		vec2 pos = {0, line_offset};
+		w->draw_text(pos, text);
 	}
 
 	psm_window* init(std::string name, int X, int Y, float dt){
 		dt *= 1000;
+		psm::X = X;
+		psm::Y = Y;
+		line_offset = Y;
+
 		glutTimerFunc(dt, game_loop, dt);
-		window = new psm_window(name.c_str(), X, Y, display);
-		return window;
+		w = new psm_window(name.c_str(), X, Y, display);
+		return w;
 	}
 }

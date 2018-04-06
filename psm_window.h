@@ -1,5 +1,7 @@
 #include <GL/glut.h>
 #include <math.h>
+#include <cstring>
+#include <string>
 
 #define PI 3.1415926535f
 #define PI2 6.28318530718f
@@ -18,7 +20,7 @@ struct vec2{
 
 class psm_window{
 private:
-	const unsigned int X, Y;
+	const int X, Y;
 
 public:
 	psm_window(const char* name, const unsigned int x, const unsigned int y, void (*display)(void));
@@ -28,8 +30,11 @@ public:
 	void draw_square(const vec2&, GLint len) const;
 	void draw_circle(const vec2&, GLint rad, int quality=16) const;
 	void draw_circle(const vec2&, GLint rad, float roll, int quality=16) const;
+	void draw_text(const vec2&, const char*);
+	void draw_text(const vec2&, const std::string);
 
 	static float get_vector_length(const vec2&);
+	static float get_vector_distance(const vec2&, const vec2&);
 	static vec2 normalize_vector(const vec2&);
 
 private:
