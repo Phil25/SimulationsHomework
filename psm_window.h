@@ -12,11 +12,6 @@
 
 struct vec2{
 	float x, y;
-
-	void add(const vec2& v){
-		this->x += v.x;
-		this->y += v.y;
-	}
 };
 
 class psm_window{

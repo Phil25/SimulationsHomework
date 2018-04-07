@@ -5,24 +5,25 @@
 
 #define WINDOW_X 640
 #define WINDOW_Y 640
-#define PPM 1 // pixels per meter
 
 #define TO_RAD(x) x *PI /180
+
+#define PLANE_LENGTH 1000
+#define BALL_START 500
 
 #define I_CYLINDER mass *radius *radius /2
 #define I_BALL 2 *mass *radius *radius /5
 
-#define PLANE_LENGTH 1000
-#define BALL_START 700
+#define PPM 10 // pixels per metere
 
 // input constants
 const float dt = 0.01;
-const float g = -9.81 *PPM;
+const float g = -9.81;
 const float radius = 25;
 const float mass = 1;
 const float ang_deg = 45;
 const float beta_deg = 90;
-const float I = I_CYLINDER;
+const float I = I_BALL;
 
 // inclined surface angle in radians
 const float ang = TO_RAD(ang_deg);
@@ -30,7 +31,7 @@ const float sina = sin(ang);
 const float cosa = cos(ang);
 
 // acceleration
-const float a = (g *sina) /(1 + I/(mass *radius *radius));
+const float a = (g *sina) /(1 + I/(mass *radius *radius)) *PPM;
 const vec2 av = {cosa *a, sina *a};
 const float epsilon = a /radius;
 
@@ -88,6 +89,7 @@ std::string display_penergy(){
 	return oss.str();
 }
 
+// executes every dt
 void render(psm_window* w){
 
 	// draw rotation graph
@@ -105,7 +107,8 @@ void render(psm_window* w){
 	psm::print(display_kenergy());
 	psm::print(display_penergy());
 
-	if(pos.y <= radius)
+	// end simulation when object beyond screen
+	if(pos.y <= -radius || pos.x <= -radius)
 		return;
 
 	// draw the circle object
