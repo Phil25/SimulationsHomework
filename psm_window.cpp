@@ -1,12 +1,16 @@
 #include "psm_window.h"
 
-psm_window::psm_window(const char* name, const unsigned int x, const unsigned int y, void (*display)(void)):
+psm_window::psm_window(const char* name, const unsigned int x, const unsigned int y):
 X(x),
-Y(y)
+Y(y),
+line_offset(Y)
 {
 	glutInitWindowSize(X, Y);
 	glutCreateWindow(name);
 	init();
+}
+
+void psm_window::loop(void (*display)(void)) const{
 	glutDisplayFunc(display);
 	glutMainLoop();
 }
@@ -23,8 +27,8 @@ void psm_window::init() const{
 }
 
 void psm_window::draw(const vec2& p1, const vec2& p2) const{
-	glVertex2f(p1.x, p1.y);
-	glVertex2f(p2.x, p2.y);
+	glVertex2f(offset.x +p1.x, offset.y +p1.y);
+	glVertex2f(offset.x +p2.x, offset.y +p2.y);
 }
 
 vec2 psm_window::get_circle_vec2(const vec2& o, float r, float ang) const{
@@ -77,6 +81,12 @@ void psm_window::draw_circle(const vec2& o, float r, float roll, int q) const{
 	glEnd();
 }
 
+void psm_window::println(const std::string text){
+	line_offset -= line_diff;
+	vec2 pos = {0, line_offset};
+	this->draw_text(pos, text);
+}
+
 void psm_window::draw_text(const vec2& pos, const char* text) const{
 	glRasterPos2f(pos.x, pos.y);
 	int len = std::strlen(text);
@@ -84,8 +94,12 @@ void psm_window::draw_text(const vec2& pos, const char* text) const{
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
 }
 
-void psm_window::draw_text(const vec2& pos, std::string text) const{
+void psm_window::draw_text(const vec2& pos, const std::string& text) const{
 	this->draw_text(pos, text.c_str());
+}
+
+void psm_window::reload_print(){
+	line_offset = Y;
 }
 
 void psm_window::draw_graph(const std::vector<vec2>& vecs) const{

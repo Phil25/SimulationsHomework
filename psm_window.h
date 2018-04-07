@@ -18,16 +18,30 @@ class psm_window{
 private:
 	const int X, Y;
 
+	const float line_diff = 24;
+	float line_offset;
+
 public:
-	psm_window(const char* name, const unsigned int x, const unsigned int y, void (*display)(void));
+	vec2 offset = {0, 0};
+
+public:
+	psm_window(const char* name, const unsigned int x, const unsigned int y);
+	void loop(void (*display)(void)) const;
 
 	void draw_line(const vec2&, const vec2&) const;
+
 	void draw_vector(const vec2&, const vec2& direction);
+
 	void draw_square(const vec2&, float len) const;
+
 	void draw_circle(const vec2&, float rad, int quality=0) const;
 	void draw_circle(const vec2&, float rad, float roll, int quality=0) const;
+
+	void println(const std::string);
 	void draw_text(const vec2&, const char*) const;
-	void draw_text(const vec2&, const std::string) const;
+	void draw_text(const vec2&, const std::string&) const;
+	void reload_print();
+
 	void draw_graph(const std::vector<vec2>& vecs) const;
 	void draw_path(const std::vector<vec2>& vecs) const;
 

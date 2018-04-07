@@ -9,7 +9,7 @@
 #define TO_RAD(x) x *PI /180
 
 #define PLANE_LENGTH 1000
-#define BALL_START 500
+#define BALL_START 700
 
 #define I_CYLINDER mass *radius *radius /2
 #define I_BALL 2 *mass *radius *radius /5
@@ -102,10 +102,10 @@ void render(psm_window* w){
 	w->draw_line(plane_start, plane_end);
 
 	// print information
-	psm::print(display_velocity());
-	psm::print(display_velocityv());
-	psm::print(display_kenergy());
-	psm::print(display_penergy());
+	w->println(display_velocity());
+	w->println(display_velocityv());
+	w->println(display_kenergy());
+	w->println(display_penergy());
 
 	// end simulation when object beyond screen
 	if(pos.y <= -radius || pos.x <= -radius)
@@ -125,7 +125,7 @@ void render(psm_window* w){
 	w->draw_line(r1pos, r2pos);
 
 	// cache positions for the graph
-	if(frame++ % 10 == 0){
+	if(frame++ % 5 == 0){
 		positions.push_back(pos);
 		rpositions.push_back(r2pos);
 	}
