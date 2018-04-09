@@ -46,8 +46,9 @@ public:
 	void draw_path(const std::vector<vec2>& vecs) const;
 
 	static float get_vector_length(const vec2&);
-	static float get_vector_distance(const vec2&, const vec2&);
+	static float get_vector_distance(const vec2&, const vec2&, bool squared=false);
 	static vec2 normalize_vector(const vec2&);
+	static vec2 get_direction(const vec2&, const vec2&, bool normalized=true);
 
 private:
 	void init() const;

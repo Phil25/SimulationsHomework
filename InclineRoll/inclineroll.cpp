@@ -14,7 +14,7 @@
 #define I_CYLINDER mass *radius *radius /2
 #define I_BALL 2 *mass *radius *radius /5
 
-#define PPM 10 // pixels per metere
+#define PPM 25 // pixels per metere
 
 // input constants
 const float dt = 0.01;

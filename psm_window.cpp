@@ -122,13 +122,19 @@ float psm_window::get_vector_length(const vec2& v){
 	return std::sqrt(v.x*v.x + v.y*v.y);
 }
 
-float psm_window::get_vector_distance(const vec2& v1, const vec2& v2){
+float psm_window::get_vector_distance(const vec2& v1, const vec2& v2, bool squared){
 	float dx = v2.x -v1.x;
 	float dy = v2.y -v1.y;
-	return std::sqrt(dx*dx + dy*dy);
+	float result = dx*dx + dy*dy;
+	return squared ? result : std::sqrt(result);
 }
 
 vec2 psm_window::normalize_vector(const vec2& v){
 	float len = psm_window::get_vector_length(v);
 	return vec2{v.x/len, v.y/len};
-};
+}
+
+vec2 psm_window::get_direction(const vec2& p1, const vec2& p2, bool normalized){
+	vec2 dir = {p2.x -p1.x, p2.y -p1.y};
+	return normalized ? psm_window::normalize_vector(dir) : dir;
+}
