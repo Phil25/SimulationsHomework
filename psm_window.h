@@ -21,6 +21,8 @@ private:
 	const float line_diff = 24;
 	float line_offset;
 
+	const float vector_arrow = 15;
+
 public:
 	vec2 offset = {0, 0};
 
@@ -40,6 +42,7 @@ public:
 	void println(const std::string);
 	void draw_text(const vec2&, const char*) const;
 	void draw_text(const vec2&, const std::string&) const;
+	void draw_text_offset(const vec2&, const std::string&) const;
 	void reload_print();
 
 	void draw_graph(const std::vector<vec2>& vecs) const;

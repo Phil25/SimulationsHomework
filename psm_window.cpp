@@ -46,7 +46,7 @@ void psm_window::draw_line(const vec2& p1, const vec2& p2) const{
 void psm_window::draw_vector(const vec2& o, const vec2& dir){
 	vec2 o2{o.x +dir.x, o.y +dir.y};
 	this->draw_line(o, o2);
-	this->draw_square(vec2{o2.x -5, o2.y -5}, 10);
+	this->draw_square(vec2{o2.x -4, o2.y -4}, 8);
 }
 
 void psm_window::draw_square(const vec2& a, float len) const{
@@ -96,6 +96,10 @@ void psm_window::draw_text(const vec2& pos, const char* text) const{
 
 void psm_window::draw_text(const vec2& pos, const std::string& text) const{
 	this->draw_text(pos, text.c_str());
+}
+
+void psm_window::draw_text_offset(const vec2& pos, const std::string& text) const{
+	this->draw_text(vec2{pos.x +offset.x, pos.y +offset.y}, text.c_str());
 }
 
 void psm_window::reload_print(){
