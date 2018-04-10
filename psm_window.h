@@ -28,6 +28,7 @@ public:
 
 public:
 	psm_window(const char* name, const unsigned int x, const unsigned int y);
+	void input(void (*key_event)(unsigned char, int, int)) const;
 	void loop(void (*display)(void)) const;
 
 	void draw_line(const vec2&, const vec2&) const;

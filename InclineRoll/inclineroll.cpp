@@ -89,6 +89,10 @@ std::string display_penergy(){
 	return oss.str();
 }
 
+void key_press(unsigned char key){
+	(void)key;
+}
+
 // executes every dt
 void render(psm_window* w){
 

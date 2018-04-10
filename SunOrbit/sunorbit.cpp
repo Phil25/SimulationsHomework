@@ -6,9 +6,9 @@
 
 #define TO_RAD(x) x *PI /180
 
-#define SUN_FIXED false
+#define SUN_FIXED true
 #define CONFINE_POSITIONS
-//#define DRAW_TRAJECTORY
+#define DRAW_TRAJECTORY
 
 #define SCALE 10000000
 
@@ -29,7 +29,7 @@ struct body{
 std::vector<body> b = {
 	{ // sun
 		"s",
-		20, // radius
+		50, // radius
 		100000000, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
@@ -42,8 +42,8 @@ std::vector<body> b = {
 		10000000, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, 200}, // velocity
-		{200, -200} // position
+		{0, 120}, // velocity
+		{200, 0} // position
 	},
 	{ // moon
 		"m",
@@ -51,29 +51,11 @@ std::vector<body> b = {
 		10000000, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, 200}, // velocity
-		{-200, -200} // position
-	},
-	{ // moon
-		"m",
-		20, // radius
-		10000000, // mass
-		{0, 0}, // force
-		{0, 0}, // acceleration
-		{0, -200}, // velocity
-		{-200, 200} // position
-	},
-	{ // moon
-		"m",
-		20, // radius
-		10000000, // mass
-		{0, 0}, // force
-		{0, 0}, // acceleration
-		{0, -200}, // velocity
-		{200, 200} // position
+		{0, 120}, // velocity
+		{100, 0} // position
 	}
 };
-const int count = b.size();
+int count = b.size();
 float dist2 = 0;
 int frame = 0;
 
@@ -106,6 +88,20 @@ void confine_positions(){
 	}
 }
 #endif
+
+void key_press(unsigned char key){
+	trajectories.push_back(std::vector<vec2>());
+	b.push_back({
+		std::string(1, key),
+		20, // radius
+		1000000, // mass
+		{0, 0}, // force
+		{0, 0}, // acceleration
+		{0, 200}, // velocity
+		{(-300 +(float)key), -200} // position
+	});
+	count++;
+}
 
 // executes every dt
 void render(psm_window* w){

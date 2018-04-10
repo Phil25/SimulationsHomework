@@ -10,6 +10,10 @@ line_offset(Y)
 	init();
 }
 
+void psm_window::input(void (*key_event)(unsigned char, int, int)) const{
+	glutKeyboardFunc(key_event);
+}
+
 void psm_window::loop(void (*display)(void)) const{
 	glutDisplayFunc(display);
 	glutMainLoop();
