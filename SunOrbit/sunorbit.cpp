@@ -8,7 +8,8 @@
 
 #define SUN_FIXED true
 #define CONFINE_POSITIONS
-#define DRAW_TRAJECTORY
+//#define DRAW_TRAJECTORY
+//#define DRAW_VELOCITY
 
 #define SCALE 10000000
 
@@ -26,11 +27,13 @@ struct body{
 	vec2 vel;
 	vec2 pos;
 };
+const float sun_mass = 10000000;
+const float orbital_velocity = 75;//std::sqrt(G *sun_mass /200);
 std::vector<body> b = {
 	{ // sun
 		"s",
 		50, // radius
-		100000000, // mass
+		sun_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
 		{0, 0}, // velocity
@@ -39,20 +42,20 @@ std::vector<body> b = {
 	{ // earth
 		"e",
 		20, // radius
-		10000000, // mass
+		sun_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, 120}, // velocity
+		{0, orbital_velocity}, // velocity
 		{200, 0} // position
 	},
 	{ // moon
 		"m",
-		20, // radius
-		10000000, // mass
+		5, // radius
+		10000, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, 120}, // velocity
-		{100, 0} // position
+		{0, orbital_velocity*2}, // velocity
+		{230, 0} // position
 	}
 };
 int count = b.size();
@@ -90,7 +93,9 @@ void confine_positions(){
 #endif
 
 void key_press(unsigned char key){
+#ifdef DRAW_TRAJECTORY
 	trajectories.push_back(std::vector<vec2>());
+#endif
 	b.push_back({
 		std::string(1, key),
 		20, // radius
@@ -107,18 +112,23 @@ void key_press(unsigned char key){
 void render(psm_window* w){
 	frame++;
 
+	w->println(std::to_string(count));
+
 	// draw bodies
 	for(int i = 0; i < count; i++)
 		w->draw_circle(b[i].pos, b[i].r);
 
+	// iterate through every body
 	for(int i = 0; i < count; i++){
+		// iterate through every other body
 		for(int j = 0; j < count; j++){
 			if(i == j) continue;
 			const float dist2 = psm_window::get_vector_distance(b[i].pos, b[j].pos, true);
 
 			// calculate force
-			b[i].force.x = -G *b[i].m *b[j].m /dist2 *(b[i].pos.x -b[j].pos.x);
-			b[i].force.y = -G *b[i].m *b[j].m /dist2 *(b[i].pos.y -b[j].pos.y);
+			float magnitude = -G *b[i].m *b[j].m /dist2;
+			b[i].force.x = magnitude *(b[i].pos.x -b[j].pos.x);
+			b[i].force.y = magnitude *(b[i].pos.y -b[j].pos.y);
 
 			// calculate acceleration
 			b[i].acc.x = b[i].force.x /b[i].m;
@@ -149,12 +159,15 @@ void render(psm_window* w){
 	confine_positions();
 #endif
 
+#ifdef DRAW_VELOCITY
 	for(int i = 0; i < count; i++)
 		w->draw_vector(b[i].pos, b[i].vel);
+#endif
 
 }
 
 int main(int argc, char** argv){
+	std::cout << "orbital_velocity: " << orbital_velocity << std::endl;
 	glutInit(&argc, argv);
 	psm::init("Sun Orbit", WINDOW_X, WINDOW_Y, dt, vec2{WINDOW_X/2, WINDOW_Y/2});
 	return 0;
