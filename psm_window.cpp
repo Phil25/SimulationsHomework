@@ -1,9 +1,10 @@
 #include "psm_window.h"
 
-psm_window::psm_window(const char* name, const unsigned int x, const unsigned int y):
+psm_window::psm_window(const char* name, const unsigned int x, const unsigned int y, const double scale):
 X(x),
 Y(y),
-line_offset(Y)
+line_offset(Y),
+scale(scale)
 {
 	glutInitWindowSize(X, Y);
 	glutCreateWindow(name);
@@ -35,7 +36,7 @@ void psm_window::draw(const vec2& p1, const vec2& p2) const{
 	glVertex2f(offset.x +p2.x, offset.y +p2.y);
 }
 
-vec2 psm_window::get_circle_vec2(const vec2& o, float r, float ang) const{
+vec2 psm_window::get_circle_vec2(const vec2& o, double r, double ang) const{
 	return vec2{o.x + r *cos(ang), o.y + r *sin(ang)};
 }
 
@@ -43,7 +44,9 @@ vec2 psm_window::get_circle_vec2(const vec2& o, float r, float ang) const{
 
 void psm_window::draw_line(const vec2& p1, const vec2& p2) const{
 	glBegin(GL_LINES);
-	draw(p1, p2);
+	vec2 p1a{p1.x /scale, p1.y /scale};
+	vec2 p2a{p2.x /scale, p2.y /scale};
+	draw(p1a, p2a);
 	glEnd();
 }
 
@@ -53,7 +56,7 @@ void psm_window::draw_vector(const vec2& o, const vec2& dir){
 	this->draw_square(vec2{o2.x -4, o2.y -4}, 8);
 }
 
-void psm_window::draw_square(const vec2& a, float len) const{
+void psm_window::draw_square(const vec2& a, double len) const{
 	vec2	b = {a.x +len, a.y},
 			c = {b.x, b.y +len},
 			d = {c.x -len, c.y};
@@ -65,15 +68,16 @@ void psm_window::draw_square(const vec2& a, float len) const{
 	glEnd();
 }
 
-void psm_window::draw_circle(const vec2& o, float r, int q) const{
+void psm_window::draw_circle(const vec2& o, double r, int q) const{
 	this->draw_circle(o, r, 0.0f, q);
 }
 
-void psm_window::draw_circle(const vec2& o, float r, float roll, int q) const{
+void psm_window::draw_circle(const vec2& pos, double r, double roll, int q) const{
 	glBegin(GL_LINES);
+	vec2 o{pos.x/scale, pos.y/scale};
 	q = q < 50 ? 32 : q;
-	const float step = PI2 /q;
-	float ang = roll;
+	const double step = PI2 /q;
+	double ang = roll;
 	vec2 last = get_circle_vec2(o, r, ang);
 	for(int i = 0; i <= q; i++){
 		vec2 p = get_circle_vec2(o, r, ang);
@@ -103,7 +107,8 @@ void psm_window::draw_text(const vec2& pos, const std::string& text) const{
 }
 
 void psm_window::draw_text_offset(const vec2& pos, const std::string& text) const{
-	this->draw_text(vec2{pos.x +offset.x, pos.y +offset.y}, text.c_str());
+	vec2 o{pos.x/scale, pos.y/scale};
+	this->draw_text(vec2{o.x +offset.x, o.y +offset.y}, text.c_str());
 }
 
 void psm_window::reload_print(){
@@ -126,19 +131,19 @@ void psm_window::draw_path(const std::vector<vec2>& vecs) const{
 
 // static
 
-float psm_window::get_vector_length(const vec2& v){
+double psm_window::get_vector_length(const vec2& v){
 	return std::sqrt(v.x*v.x + v.y*v.y);
 }
 
-float psm_window::get_vector_distance(const vec2& v1, const vec2& v2, bool squared){
-	float dx = v2.x -v1.x;
-	float dy = v2.y -v1.y;
-	float result = dx*dx + dy*dy;
+double psm_window::get_vector_distance(const vec2& v1, const vec2& v2, bool squared){
+	double dx = v2.x -v1.x;
+	double dy = v2.y -v1.y;
+	double result = dx*dx + dy*dy;
 	return squared ? result : std::sqrt(result);
 }
 
 vec2 psm_window::normalize_vector(const vec2& v){
-	float len = psm_window::get_vector_length(v);
+	double len = psm_window::get_vector_length(v);
 	return vec2{v.x/len, v.y/len};
 }
 

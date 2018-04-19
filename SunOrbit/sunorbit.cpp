@@ -6,29 +6,35 @@
 
 #define TO_RAD(x) x *PI /180
 
-#define SUN_FIXED true
-#define CONFINE_POSITIONS
-//#define DRAW_TRAJECTORY
-//#define DRAW_VELOCITY
-
-#define SCALE 10000000
+#define SUN_FIXED false
+//#define CONFINE_POSITIONS
+#define DRAW_TRAJECTORY
+#define DRAW_VELOCITY
+#define ANIM_SPEED 1000000
 
 // input constants
-const float dt = 0.01;
-const float G = 6.6742e-11 *SCALE;
+const double scale = 1e9;
+const double dt = 0.01;
+const double dt_spd = dt *ANIM_SPEED;
+const double G = 6.6742e-11;
+
+// space stuff
+const double sun_mass = 1.989e30;
+const double earth_mass = 5.972e24;
+const double sun_earth_dist = 1.496e11;
 
 // non-constants
 struct body{
 	std::string name;
-	float r;
-	float m;
+	double r;
+	double m;
 	vec2 force;
 	vec2 acc;
 	vec2 vel;
 	vec2 pos;
 };
-const float sun_mass = 10000000;
-const float orbital_velocity = 75;//std::sqrt(G *sun_mass /200);
+//const double orbital_velocity = 1e10;
+const double orbital_velocity = std::sqrt(G *sun_mass /sun_earth_dist);
 std::vector<body> b = {
 	{ // sun
 		"s",
@@ -42,24 +48,24 @@ std::vector<body> b = {
 	{ // earth
 		"e",
 		20, // radius
-		sun_mass, // mass
+		earth_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
 		{0, orbital_velocity}, // velocity
-		{200, 0} // position
-	},
+		{sun_earth_dist, 0} // position
+	}/*,
 	{ // moon
 		"m",
 		5, // radius
-		10000, // mass
+		7.348e22, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
 		{0, orbital_velocity*2}, // velocity
 		{230, 0} // position
-	}
+	}*/
 };
 int count = b.size();
-float dist2 = 0;
+double dist2 = 0;
 int frame = 0;
 
 #ifdef DRAW_TRAJECTORY
@@ -68,10 +74,10 @@ std::vector<std::vector<vec2>> trajectories(count);
 
 #ifdef CONFINE_POSITIONS
 void confine_positions(){
-	const float dampening = 0.25;
+	const double dampening = 0.25;
 	for(int i = 0; i < count; i++){
-		const float bound_x = WINDOW_X/2 -b[i].r;
-		const float bound_y = WINDOW_Y/2 -b[i].r;
+		const double bound_x = WINDOW_X/2 -b[i].r;
+		const double bound_y = WINDOW_Y/2 -b[i].r;
 		if(b[i].pos.y > bound_y){
 			b[i].pos.y = bound_y;
 			b[i].vel.y *= -dampening;
@@ -99,11 +105,11 @@ void key_press(unsigned char key){
 	b.push_back({
 		std::string(1, key),
 		20, // radius
-		1000000, // mass
+		earth_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, 200}, // velocity
-		{(-300 +(float)key), -200} // position
+		{0, -orbital_velocity}, // velocity
+		{-sun_earth_dist, 0} // position
 	});
 	count++;
 }
@@ -112,7 +118,10 @@ void key_press(unsigned char key){
 void render(psm_window* w){
 	frame++;
 
-	w->println(std::to_string(count));
+	w->println("Animation speed:");
+	w->println(std::to_string(ANIM_SPEED));
+	w->println(std::to_string(b[1].vel.x));
+	w->println(std::to_string(b[1].vel.y));
 
 	// draw bodies
 	for(int i = 0; i < count; i++)
@@ -123,10 +132,10 @@ void render(psm_window* w){
 		// iterate through every other body
 		for(int j = 0; j < count; j++){
 			if(i == j) continue;
-			const float dist2 = psm_window::get_vector_distance(b[i].pos, b[j].pos, true);
+			const double dist2 = psm_window::get_vector_distance(b[i].pos, b[j].pos, true);
 
 			// calculate force
-			float magnitude = -G *b[i].m *b[j].m /dist2;
+			double magnitude = -G *b[i].m *b[j].m /dist2;
 			b[i].force.x = magnitude *(b[i].pos.x -b[j].pos.x);
 			b[i].force.y = magnitude *(b[i].pos.y -b[j].pos.y);
 
@@ -135,15 +144,15 @@ void render(psm_window* w){
 			b[i].acc.y = b[i].force.y /b[i].m;
 
 			// increment velocity
-			b[i].vel.x += b[i].acc.x *dt;
-			b[i].vel.y += b[i].acc.y *dt;
+			b[i].vel.x += b[i].acc.x *dt_spd /scale;
+			b[i].vel.y += b[i].acc.y *dt_spd /scale;
 		}
 	}
 
 	for(int i = SUN_FIXED; i < count; i++){
 		// calculate new position
-		b[i].pos.x += b[i].vel.x *dt;
-		b[i].pos.y += b[i].vel.y *dt;
+		b[i].pos.x += b[i].vel.x *dt_spd;
+		b[i].pos.y += b[i].vel.y *dt_spd;
 		w->draw_text_offset(b[i].pos, b[i].name);
 
 #ifdef DRAW_TRAJECTORY
@@ -160,16 +169,15 @@ void render(psm_window* w){
 #endif
 
 #ifdef DRAW_VELOCITY
-	for(int i = 0; i < count; i++)
+	for(int i = SUN_FIXED; i < count; i++)
 		w->draw_vector(b[i].pos, b[i].vel);
 #endif
 
 }
 
 int main(int argc, char** argv){
-	std::cout << "orbital_velocity: " << orbital_velocity << std::endl;
 	glutInit(&argc, argv);
-	psm::init("Sun Orbit", WINDOW_X, WINDOW_Y, dt, vec2{WINDOW_X/2, WINDOW_Y/2});
+	psm::init("Sun Orbit", WINDOW_X, WINDOW_Y, dt, vec2{WINDOW_X/2, WINDOW_Y/2}, scale);
 	return 0;
 }
 

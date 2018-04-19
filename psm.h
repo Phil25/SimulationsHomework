@@ -27,10 +27,10 @@ namespace psm{
 		glFlush();
 	}
 
-	psm_window* init(std::string name, int X, int Y, float dt, const vec2& offset){
+	psm_window* init(std::string name, int X, int Y, float dt, const vec2& offset, const double scale){
 		dt *= 1000;
 		glutTimerFunc(dt, game_loop, dt);
-		w = new psm_window(name.c_str(), X, Y);
+		w = new psm_window(name.c_str(), X, Y, scale);
 		w->offset = offset;
 		w->input(key_event);
 		w->loop(display);
@@ -38,6 +38,6 @@ namespace psm{
 	}
 
 	psm_window* init(std::string name, int X, int Y, float dt){
-		return init(name, X, Y, dt, vec2{});
+		return init(name, X, Y, dt, vec2{}, 1.0);
 	}
 }

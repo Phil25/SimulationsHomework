@@ -9,7 +9,7 @@
 #define TO_RAD(x) x *PI /180
 
 #define PLANE_LENGTH 1000
-#define BALL_START 700
+#define BALL_START 500
 
 #define I_CYLINDER mass *radius *radius /2
 #define I_BALL 2 *mass *radius *radius /5
@@ -21,9 +21,9 @@ const float dt = 0.01;
 const float g = -9.81;
 const float radius = 25;
 const float mass = 1;
-const float ang_deg = 45;
+const float ang_deg = 15;
 const float beta_deg = 90;
-const float I = I_BALL;
+const float I = I_CYLINDER;
 
 // inclined surface angle in radians
 const float ang = TO_RAD(ang_deg);
