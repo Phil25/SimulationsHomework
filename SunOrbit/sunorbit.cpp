@@ -9,7 +9,7 @@
 #define SUN_FIXED false
 //#define CONFINE_POSITIONS
 #define DRAW_TRAJECTORY
-#define DRAW_VELOCITY
+//#define DRAW_VELOCITY
 #define ANIM_SPEED 1000000
 
 // input constants
@@ -19,9 +19,12 @@ const double dt_spd = dt *ANIM_SPEED;
 const double G = 6.6742e-11;
 
 // space stuff
-const double sun_mass = 1.989e30;
+const double sun_mass = 1.989e30/1;
 const double earth_mass = 5.972e24;
+const double moon_mass = 7.348e22;
+
 const double sun_earth_dist = 1.496e11;
+const double moon_earth_dist = 3.844e8;
 
 // non-constants
 struct body{
@@ -34,10 +37,11 @@ struct body{
 	vec2 pos;
 };
 //const double orbital_velocity = 1e10;
-const double orbital_velocity = std::sqrt(G *sun_mass /sun_earth_dist);
+const double orbital_velocity_earth = std::sqrt(G *sun_mass /sun_earth_dist) *12.225;
+const double orbital_velocity_moon = std::sqrt(G *earth_mass /moon_earth_dist) *0.25;
 std::vector<body> b = {
 	{ // sun
-		"s",
+		"",
 		50, // radius
 		sun_mass, // mass
 		{0, 0}, // force
@@ -46,22 +50,22 @@ std::vector<body> b = {
 		{0, 0} // position
 	},
 	{ // earth
-		"e",
+		"",
 		20, // radius
 		earth_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, orbital_velocity}, // velocity
+		{0, orbital_velocity_earth}, // velocity
 		{sun_earth_dist, 0} // position
 	}/*,
 	{ // moon
-		"m",
+		"",
 		5, // radius
-		7.348e22, // mass
+		moon_mass, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, orbital_velocity*2}, // velocity
-		{230, 0} // position
+		{0, orbital_velocity_earth +orbital_velocity_moon}, // velocity
+		{sun_earth_dist +moon_earth_dist, 0} // position
 	}*/
 };
 int count = b.size();
@@ -98,6 +102,7 @@ void confine_positions(){
 }
 #endif
 
+double dir = 1.0;
 void key_press(unsigned char key){
 #ifdef DRAW_TRAJECTORY
 	trajectories.push_back(std::vector<vec2>());
@@ -105,12 +110,13 @@ void key_press(unsigned char key){
 	b.push_back({
 		std::string(1, key),
 		20, // radius
-		earth_mass, // mass
+		earth_mass*100, // mass
 		{0, 0}, // force
 		{0, 0}, // acceleration
-		{0, -orbital_velocity}, // velocity
-		{-sun_earth_dist, 0} // position
+		{0, -orbital_velocity_earth *dir}, // velocity
+		{-sun_earth_dist -key*sun_earth_dist/100, 0} // position
 	});
+	//dir *= -1;
 	count++;
 }
 
@@ -122,6 +128,7 @@ void render(psm_window* w){
 	w->println(std::to_string(ANIM_SPEED));
 	w->println(std::to_string(b[1].vel.x));
 	w->println(std::to_string(b[1].vel.y));
+	w->println(std::to_string(count));
 
 	// draw bodies
 	for(int i = 0; i < count; i++)
@@ -132,7 +139,9 @@ void render(psm_window* w){
 		// iterate through every other body
 		for(int j = 0; j < count; j++){
 			if(i == j) continue;
-			const double dist2 = psm_window::get_vector_distance(b[i].pos, b[j].pos, true);
+			dist2 = psm_window::get_vector_distance(b[i].pos, b[j].pos, true);
+			if(dist2 < 1)
+				dist2 = 1;
 
 			// calculate force
 			double magnitude = -G *b[i].m *b[j].m /dist2;
@@ -162,7 +171,6 @@ void render(psm_window* w){
 		w->draw_graph(trajectories[i]);
 #endif
 	}
-
 
 #ifdef CONFINE_POSITIONS
 	confine_positions();

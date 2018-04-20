@@ -60,7 +60,8 @@ void psm_window::draw_square(const vec2& a, double len) const{
 	vec2	b = {a.x +len, a.y},
 			c = {b.x, b.y +len},
 			d = {c.x -len, c.y};
-	glBegin(GL_LINES);
+	//glBegin(GL_LINES); // draws lines only
+	glBegin(GL_QUADS); // draws the square filled
 	draw(a, b);
 	draw(b, c);
 	draw(c, d);
