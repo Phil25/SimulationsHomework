@@ -8,7 +8,7 @@
 	for(int i = 0; i < SIZE; i++)\
 	for(int j = 0; j < SIZE; j++)
 
-const double dt = 0.01;
+const double dt = 0.8;
 const vec2 size{(double)WINDOW/SIZE, (double)WINDOW/SIZE};
 
 bool thisGen[SIZE][SIZE]{{false}};
