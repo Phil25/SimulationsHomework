@@ -3,6 +3,11 @@
 #include "psm_window.h"
 #include <iostream>
 
+
+#ifndef PSM_H
+#define PSM_H
+
+
 void render(psm_window*);
 void key_press(unsigned char key);
 
@@ -41,3 +46,6 @@ namespace psm{
 		return init(name, X, Y, dt, vec2{}, 1.0);
 	}
 }
+
+
+#endif

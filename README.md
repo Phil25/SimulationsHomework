@@ -50,10 +50,13 @@ Homework assignments for the simulations subject at PJWSTK (PSM)
 * Implementation of Conway's Game of Life with possibility to:
 	* pause/resume the simulation at any time,
 	* manually toggle cells at any point in the simulation using a brush,
+	* set the iteration speed,
 	* enter draw mode, which automatically enables cells under the brush,
-	* set the iteration speed.
+	* spawn a glider.
+* Includes wrap-around grid.
 * Controls:
 	* Q - quit application
+	* Space - pause/resume
 	* W/K - move up
 	* S/J - move down
 	* D/L - move right

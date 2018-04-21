@@ -4,6 +4,11 @@
 #include <vector>
 #include <string>
 
+
+#ifndef PSM_WINDOW_H
+#define PSM_WINDOW_H
+
+
 #define PI 3.1415926535f
 #define PI2 6.28318530718f
 #define PI05 1.57079632679f
@@ -62,3 +67,6 @@ private:
 	vec2 get_circle_vec2(const vec2&, double rad, double ang) const;
 
 };
+
+
+#endif
