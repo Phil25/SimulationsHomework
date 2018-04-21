@@ -52,8 +52,14 @@ Homework assignments for the simulations subject at PJWSTK (PSM)
 	* manually toggle cells at any point in the simulation using a brush,
 	* set the iteration speed,
 	* enter draw mode, which automatically enables cells under the brush,
-	* spawn a glider.
+	* spawn a glider,
+	* provide custom rules.
 * Includes wrap-around grid.
+* Rules format X/Y:
+	* X - # of neighbours for alive cell to stay alive
+	* Y - # of neighbours for dead cell to become alive
+	* Example: 123/1 - keep alive if 1, 2 or 3 neighbours, turn alive if 1 neighbour.
+	* If input left blank defaults to 23/3 (actual rules).
 * Controls:
 	* Q - quit application
 	* Space - pause/resume

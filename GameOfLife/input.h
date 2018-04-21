@@ -10,8 +10,8 @@
 template <int S>
 class input{
 
-	grid<S>& thisGen;
-	grid<S>& nextGen;
+	grid<S>& this_gen;
+	grid<S>& next_gen;
 
 	int sx = 0,
 		sy = 0;
@@ -19,14 +19,14 @@ class input{
 	const double cell_size;
 
 public:
-	bool is_playing = false;
+	bool is_paused = true;
 	bool draw_mode = false;
 
 public:
-	input(const double cell_size, grid<S>& thisGen, grid<S>& nextGen):
+	input(const double cell_size, grid<S>& this_gen, grid<S>& next_gen):
 		cell_size(cell_size),
-		thisGen(thisGen),
-		nextGen(nextGen){}
+		this_gen(this_gen),
+		next_gen(next_gen){}
 
 	void on_key(unsigned char key){
 		switch(key){
@@ -34,7 +34,7 @@ public:
 				std::exit(0);
 				break;
 			case ' ': // resume/pause
-				is_playing = !is_playing;
+				is_paused = !is_paused;
 				break;
 			case 'w': // move up
 			case 'k':
@@ -61,14 +61,14 @@ public:
 					sx = S-1;
 				break;
 			case 'e': // toggle selected cell
-				thisGen(sx, sy) = !thisGen(sx, sy);
+				this_gen(sx, sy) = !this_gen(sx, sy);
 				break;
 			case 'g': // spawn a glider
-				thisGen(sx, sy) = true;
-				thisGen(sx+1, sy+1) = true;
-				thisGen(sx+1, sy+2) = true;
-				thisGen(sx, sy+2) = true;
-				thisGen(sx-1, sy+2) = true;
+				this_gen(sx, sy) = true;
+				this_gen(sx+1, sy+1) = true;
+				this_gen(sx+1, sy+2) = true;
+				this_gen(sx, sy+2) = true;
+				this_gen(sx-1, sy+2) = true;
 				break;
 			case 'r': // toggle draw mode
 				draw_mode = !draw_mode;
@@ -84,7 +84,7 @@ public:
 
 		// continuously draw selected cell when in draw mode
 		if(draw_mode)
-			thisGen(sx, sy) = true;
+			this_gen(sx, sy) = true;
 	}
 
 };
