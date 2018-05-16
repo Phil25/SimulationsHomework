@@ -8,7 +8,7 @@
 #define WINDOW 640
 
 // grid cell_size
-#define SIZE 300
+#define SIZE 100
 #define loop_grid(i,j) \
 	for(int i = 0; i < SIZE; i++)\
 	for(int j = 0; j < SIZE; j++)
