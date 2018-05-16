@@ -5,18 +5,24 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-
-class brush{
+struct state{
 	vec2 pos;
 	vec2 dir;
+	double rot;
+};
 
-	std::stack<vec2> positions;
-	std::stack<vec2> directions;
+class brush{
+	state s;
+
+	vec2& pos = s.pos;
+	vec2& dir = s.dir;
+	double& rot = s.rot;
+
+	std::stack<state> states;
 
 public:
-	double rot;
 	double size;
-	
+
 public:
 	brush(double, double);
 

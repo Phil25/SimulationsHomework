@@ -3,9 +3,11 @@
 #define TO_RAD(x) x *PI /180
 
 brush::brush(double x, double y):
-	pos(vec2{x,y}),
-	dir(vec2{1,0}),
-	rot(0),
+	s({
+		vec2{x,y},	// position
+		vec2{1,0},	// direction
+		0			// rotation
+	}),
 	size(10)
 {}
 
@@ -29,15 +31,12 @@ void brush::turn(double distance){
 }
 
 void brush::save(){
-	positions.push(pos);
-	directions.push(dir);
+	states.push(s);
 }
 
 void brush::load(){
-	if(positions.size() <= 0)
+	if(states.size() <= 0)
 		return;
-	pos = positions.top();
-	dir = directions.top();
-	positions.pop();
-	directions.pop();
+	s = states.top();
+	states.pop();
 }

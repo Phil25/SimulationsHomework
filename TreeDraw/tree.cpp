@@ -12,7 +12,7 @@
 
 #define CHECK_CLASS(var,cls) cls* cls_instance = dynamic_cast<cls*>(var)
 
-const double dt = 0.01;
+const double dt = 0.1;
 
 std::queue<const cmd::root*> commands;
 std::vector<vec2> graph;
@@ -80,7 +80,7 @@ void make_tree(){
 	// add initial brush position
 	graph.push_back(b.get_pos());
 
-	for(int i = 0; i < 12; i++){
+	/*for(int i = 0; i < 12; i++){
 		commands.push(forward);
 		commands.push(left);
 		commands.push(left);
@@ -96,7 +96,7 @@ void make_tree(){
 		commands.push(forward);
 		commands.push(left);
 		commands.push(left);
-	}
+	}*/
 }
 
 int main(int argc, char* argv[]){
