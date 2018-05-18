@@ -12,10 +12,10 @@
 
 #define CHECK_CLASS(var,cls) cls* cls_instance = dynamic_cast<cls*>(var)
 
-const double dt = 0.1;
+const double dt = 0.05;
 
 std::queue<const cmd::root*> commands;
-std::vector<vec2> graph;
+std::vector<std::pair<vec2, vec2>> graph;
 brush b(WINDOW/2, WINDOW/2);
 
 const cmd::root* forward = new cmd::move(DIST_MOVE);
@@ -72,15 +72,15 @@ void render(psm_window* w){
 
 	// draw line if the command was move
 	if(CHECK_CLASS(command, const cmd::move))
-		graph.push_back(b.get_pos());
+		graph.push_back(std::pair<vec2, vec2>(b.get_pos(), b.get_last_pos()));
 
 }
 
 void make_tree(){
 	// add initial brush position
-	graph.push_back(b.get_pos());
+	graph.push_back(std::pair<vec2, vec2>(b.get_pos(), b.get_last_pos()));
 
-	/*for(int i = 0; i < 12; i++){
+	for(int i = 0; i < 12; i++){
 		commands.push(forward);
 		commands.push(left);
 		commands.push(left);
@@ -96,7 +96,7 @@ void make_tree(){
 		commands.push(forward);
 		commands.push(left);
 		commands.push(left);
-	}*/
+	}
 }
 
 int main(int argc, char* argv[]){

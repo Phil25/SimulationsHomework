@@ -54,6 +54,7 @@ public:
 	void reload_print();
 
 	void draw_graph(const std::vector<vec2>& vecs) const;
+	void draw_graph(const std::vector<std::pair<vec2, vec2>>& pairs) const;
 	void draw_path(const std::vector<vec2>& vecs) const;
 
 	static double get_vector_length(const vec2&);

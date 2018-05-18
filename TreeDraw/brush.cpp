@@ -8,6 +8,7 @@ brush::brush(double x, double y):
 		vec2{1,0},	// direction
 		0			// rotation
 	}),
+	last_pos(vec2{x, y}),
 	size(10)
 {}
 
@@ -15,11 +16,16 @@ vec2 brush::get_pos(){
 	return this->pos;
 }
 
+vec2 brush::get_last_pos(){
+	return this->last_pos;
+}
+
 vec2 brush::get_dir(bool scaled){
 	return scaled ? vec2{dir.x *size, dir.y *size} : this->dir;
 }
 
 void brush::move(double distance){
+	last_pos = pos;
 	pos.x += distance *dir.x;
 	pos.y += distance *dir.y;
 }

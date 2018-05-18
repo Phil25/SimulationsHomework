@@ -13,8 +13,10 @@ struct state{
 
 class brush{
 	state s;
+	vec2 last_pos;
 
 	vec2& pos = s.pos;
+
 	vec2& dir = s.dir;
 	double& rot = s.rot;
 
@@ -27,6 +29,7 @@ public:
 	brush(double, double);
 
 	vec2 get_pos();
+	vec2 get_last_pos();
 	vec2 get_dir(bool=false);
 
 	void move(double);
