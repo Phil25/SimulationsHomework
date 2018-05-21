@@ -124,9 +124,9 @@ void psm_window::draw_graph(const std::vector<vec2>& vecs) const{
 }
 
 void psm_window::draw_graph(const std::vector<std::pair<vec2, vec2>>& pairs) const{
-	int len = pairs.size();
+	unsigned int len = pairs.size();
 	if(len < 1) return;
-	for(int i = 1; i < len; i++)
+	for(unsigned int i = 1; i < len; i++)
 		this->draw_line(pairs[i].first, pairs[i].second);
 }
 

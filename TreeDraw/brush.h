@@ -31,6 +31,7 @@ public:
 	vec2 get_pos();
 	vec2 get_last_pos();
 	vec2 get_dir(bool=false);
+	int get_stack_size();
 
 	void move(double);
 	void turn(double);

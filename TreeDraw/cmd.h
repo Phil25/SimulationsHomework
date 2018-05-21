@@ -1,7 +1,13 @@
+#include <map>
+#include <queue>
+
 #include "brush.h"
 
 #ifndef CMD_H
 #define CMD_H
+
+#define DIST_MOVE 20
+#define DIST_TURN 30
 
 namespace cmd{
 
@@ -16,24 +22,55 @@ public:
 	virtual ~root(){};
 
 	virtual void exec(brush&) const = 0;
+	virtual char get_id() const = 0;
 };
 
-class move : public root{
+class forward : public root{
 public:
-	move(double scale) : root(scale){}
+	forward(double scale) : root(scale){}
 	void exec(brush& b) const{
 		b.move(scale);
 	}
-	~move(){};
+	char get_id() const{
+		return 'F';
+	}
+	~forward(){};
 };
 
-class turn : public root{
+class leaf : public root{
 public:
-	turn(double scale) : root(scale){}
+	leaf(double scale) : root(scale){}
+	void exec(brush& b) const{
+		b.move(scale);
+	}
+	char get_id() const{
+		return 'f';
+	}
+	~leaf(){};
+};
+
+class left : public root{
+public:
+	left(double scale) : root(scale){}
 	void exec(brush& b) const{
 		b.turn(scale);
 	}
-	~turn(){};
+	char get_id() const{
+		return '-';
+	}
+	~left(){};
+};
+
+class right : public root{
+public:
+	right(double scale) : root(scale){}
+	void exec(brush& b) const{
+		b.turn(-scale);
+	}
+	char get_id() const{
+		return '+';
+	}
+	~right(){};
 };
 
 class save : public root{
@@ -41,6 +78,9 @@ public:
 	save(double scale) : root(scale){}
 	void exec(brush& b) const{
 		b.save();
+	}
+	char get_id() const{
+		return '[';
 	}
 	~save(){};
 };
@@ -51,8 +91,41 @@ public:
 	void exec(brush& b) const{
 		b.load();
 	}
+	char get_id() const{
+		return ']';
+	}
 	~load(){};
 };
+
+std::queue<const root*> queue;
+std::map<char, const cmd::root*> cmd_map;
+
+std::vector<const root*> cmds{
+	new forward(DIST_MOVE),
+	new leaf(DIST_MOVE),
+	new left(DIST_TURN),
+	new right(DIST_TURN),
+	new save(0),
+	new load(0),
+};
+
+
+void init(){
+	int size = cmds.size();
+	for(int i = 0; i < size; i++)
+		cmd_map.insert(std::make_pair(cmds[i]->get_id(), cmds[i]));
+}
+
+void parse(unsigned char c){
+	if(cmd_map.count(c))
+		queue.push(cmd_map.at(c));
+}
+
+void parse(std::string buffer){
+	int size = buffer.length();
+	for(int i = 0; i < size; i++)
+		parse(buffer[i]);
+}
 
 }
 

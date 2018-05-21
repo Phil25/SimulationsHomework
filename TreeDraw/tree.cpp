@@ -1,5 +1,5 @@
 #include <iostream>
-#include <queue>
+#include <sstream>
 
 #include "../psm.h"
 #include "brush.h"
@@ -7,51 +7,26 @@
 
 #define WINDOW 640
 
-#define DIST_MOVE 50
-#define DIST_TURN 30
-
 #define CHECK_CLASS(var,cls) cls* cls_instance = dynamic_cast<cls*>(var)
 
-const double dt = 0.05;
+const double dt = 0.01;
+const int height = 8;
 
-std::queue<const cmd::root*> commands;
 std::vector<std::pair<vec2, vec2>> graph;
-brush b(WINDOW/2, WINDOW/2);
+std::vector<vec2> leaves;
+brush b(WINDOW/2, WINDOW/4);
 
-const cmd::root* forward = new cmd::move(DIST_MOVE);
-const cmd::root* back = new cmd::move(-DIST_MOVE);
-const cmd::root* left = new cmd::turn(DIST_TURN);
-const cmd::root* right = new cmd::turn(-DIST_TURN);
-const cmd::root* save = new cmd::save(0);
-const cmd::root* load = new cmd::load(0);
+std::string next_iter(const std::string& s, const char from, const std::string& to){
+	std::stringstream ss;
+	int i = -1;
+	while(++i, s[i] != '\0')
+		ss << (s[i] == from ? to : std::string(1, s[i]));
+	return ss.str();
+}
 
 // handle controls
 void key_press(unsigned char key){
-	switch(key){
-		case 'w':
-			commands.push(forward);
-			break;
-
-		case 'a':
-			commands.push(left);
-			break;
-
-		case 's':
-			commands.push(back);
-			break;
-
-		case 'd':
-			commands.push(right);
-			break;
-
-		case 'q':
-			commands.push(save);
-			break;
-
-		case 'e':
-			commands.push(load);
-			break;
-	}
+	cmd::parse(key);
 }
 
 // executes every dt
@@ -61,42 +36,52 @@ void render(psm_window* w){
 	w->draw_vector(b.get_pos(), b.get_dir(true));
 
 	w->draw_graph(graph);
+	w->draw_path(leaves);
 
-	if(commands.size() <= 0)
+	if(cmd::queue.size() <= 0)
 		return;
 
 	// execute and pop command
-	const cmd::root* command = commands.front();
+	const cmd::root* command = cmd::queue.front();
 	command->exec(b);
-	commands.pop();
+	cmd::queue.pop();
 
-	// draw line if the command was move
-	if(CHECK_CLASS(command, const cmd::move))
+	// draw line and a leaf if the command was leaf move
+	if(CHECK_CLASS(command, const cmd::leaf)){
+		leaves.push_back(b.get_pos());
+		graph.push_back(std::pair<vec2, vec2>(b.get_pos(), b.get_last_pos()));
+		return;
+	}
+
+	// draw line and a leaf if the command was a regular move
+	if(CHECK_CLASS(command, const cmd::forward))
 		graph.push_back(std::pair<vec2, vec2>(b.get_pos(), b.get_last_pos()));
 
 }
 
 void make_tree(){
 	// add initial brush position
+	cmd::init();
 	graph.push_back(std::pair<vec2, vec2>(b.get_pos(), b.get_last_pos()));
 
-	for(int i = 0; i < 12; i++){
-		commands.push(forward);
-		commands.push(left);
-		commands.push(left);
-		commands.push(left);
-		commands.push(forward);
-		commands.push(left);
-		commands.push(left);
-		commands.push(left);
-		commands.push(forward);
-		commands.push(left);
-		commands.push(left);
-		commands.push(left);
-		commands.push(forward);
-		commands.push(left);
-		commands.push(left);
-	}
+	cmd::parse("---");
+
+	/*
+	for(int i = 0; i < 12; i++)
+		cmd::parse("f[-f---fff-ff--ffff]+f");
+	cmd::parse("------f---f---ff+++f+++f+++f++++++f+++f");
+	cmd::parse("---f[---ff+++++ff-----ff");
+	cmd::parse("]ff---f-f------f----f------f-f");
+	cmd::parse("---f---ff+++f+++f+++f++++++f+++f");
+	*/
+
+	std::string test = "f";
+	for(int i = 0; i < height; i++)
+		test = next_iter(test, 'f', "FF[-f]+f");
+
+	std::cout << test << std::endl;
+	cmd::parse(test);
+
 }
 
 int main(int argc, char* argv[]){
