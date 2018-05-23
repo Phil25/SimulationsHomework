@@ -1,7 +1,6 @@
 #include <string>
 #include <GL/glut.h>
 #include "psm_window.h"
-#include <iostream>
 
 
 #ifndef PSM_H

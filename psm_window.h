@@ -3,6 +3,7 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <ostream>
 
 
 #ifndef PSM_WINDOW_H
@@ -17,6 +18,10 @@
 
 struct vec2{
 	double x, y;
+
+	friend std::ostream& operator<<(std::ostream& os, const vec2 v){
+		return os << '(' << v.x << ", " << v.y << ')';
+	}
 };
 
 class psm_window{
