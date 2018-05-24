@@ -1,4 +1,5 @@
 #include <vector>
+#include <iostream>
 
 #include "../psm.h"
 
@@ -6,19 +7,30 @@
 #define QUALITY 100
 
 #define FUNC(x) std::sin(x) *100
+#define SPEED 10000
 
-const double dt = 0.05;
+const double dt = 0.01;
+const double delimiter = (double)WINDOW /(double)QUALITY;
+const double delim2 = delimiter *delimiter;
 bool paused = false;
 
-std::vector<vec2> joints(QUALITY);
+std::vector<vec2> joints;
+std::vector<double> velocities;
+std::vector<double> accelerations;
+std::vector<double> d_y;
 
 // handle controls
-void key_press(unsigned char key){
-	if(key == ' ')
-		paused = !paused;
+void key_press(unsigned char /*key*/){
+	paused = !paused;
 }
 
-void setup();
+void calc_change(int x){
+	accelerations[x] = (joints[x-1].y -2* joints[x].y + joints[x+1].y) /delim2;
+	accelerations[x] *= SPEED;
+	velocities[x] += accelerations[x] *dt;
+	d_y[x] = velocities[x] *dt;
+}
+
 // executes every dt
 void render(psm_window* w){
 	w->draw_graph(joints);
@@ -27,16 +39,26 @@ void render(psm_window* w){
 
 	if(paused) return;
 
-	// TODO: update joints here
+	for(int i = 1; i < QUALITY -1; i++)
+		calc_change(i);
+
+	for(int i = 1; i < QUALITY -1; i++)
+		joints[i].y += d_y[i];
 
 }
 
 void setup(){
-	double delim = (double)WINDOW /(double)QUALITY;
 	double offset = (double)WINDOW /2;
 	for(int i = 0; i < QUALITY; i++){
-		double x = i *delim;
-		joints.push_back(vec2{x, FUNC(x) +offset});
+		double x = i *delimiter;
+		joints.push_back(vec2{x, offset});
+	}
+	velocities.resize(QUALITY);
+	accelerations.resize(QUALITY);
+	d_y.resize(QUALITY);
+	for(int i = 1; i < 27; i++){
+		double x = i *delimiter;
+		joints[i].y += FUNC(x);
 	}
 }
 
