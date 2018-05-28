@@ -97,6 +97,16 @@ public:
 	~load(){};
 };
 
+class aux : public root{
+public:
+	aux(double scale) : root(scale){}
+	void exec(brush&) const{}
+	char get_id() const{
+		return 'x';
+	}
+	~aux(){};
+};
+
 std::queue<const root*> queue;
 std::map<char, const cmd::root*> cmd_map;
 
@@ -107,6 +117,7 @@ std::vector<const root*> cmds{
 	new right(DIST_TURN),
 	new save(0),
 	new load(0),
+	new aux(0),
 };
 
 

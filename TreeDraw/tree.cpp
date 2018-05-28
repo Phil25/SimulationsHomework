@@ -75,9 +75,10 @@ void make_tree(){
 	cmd::parse("---f---ff+++f+++f+++f++++++f+++f");
 	*/
 
-	std::string test = "f";
+	std::string test = "FFx";
 	for(int i = 0; i < height; i++)
-		test = next_iter(test, 'f', "FF[-f]+f");
+		//test = next_iter(test, 'f', "FF[-f]+f");
+		test = next_iter(test, 'x', "[-Fx]+Fx");
 
 	std::cout << test << std::endl;
 	cmd::parse(test);
