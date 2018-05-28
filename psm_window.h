@@ -47,7 +47,7 @@ public:
 
 	void draw_vector(const vec2&, const vec2& direction);
 
-	void draw_square(const vec2&, double len) const;
+	void draw_square(const vec2&, double len, double visibility=1.0) const;
 
 	void draw_circle(const vec2&, double rad, int quality=0) const;
 	void draw_circle(const vec2&, double rad, double roll, int quality=0) const;

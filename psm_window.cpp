@@ -56,17 +56,20 @@ void psm_window::draw_vector(const vec2& o, const vec2& dir){
 	this->draw_square(vec2{o2.x -4, o2.y -4}, 8);
 }
 
-void psm_window::draw_square(const vec2& a, double len) const{
+void psm_window::draw_square(const vec2& a, double len, double vis) const{
 	vec2	b = {a.x +len, a.y},
 			c = {b.x, b.y +len},
 			d = {c.x -len, c.y};
 	//glBegin(GL_LINES); // draws lines only
+	vis = 1 -vis;
+	glColor3f(vis, vis, vis);
 	glBegin(GL_QUADS); // draws the square filled
 	draw(a, b);
 	draw(b, c);
 	draw(c, d);
 	draw(d, a);
 	glEnd();
+	glColor3f(0.0f, 0.0f, 0.0f);
 }
 
 void psm_window::draw_circle(const vec2& o, double r, int q) const{
