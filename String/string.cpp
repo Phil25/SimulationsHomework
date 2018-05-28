@@ -6,7 +6,7 @@
 #define WINDOW 640
 #define QUALITY 100
 
-#define FUNC(x) std::sin(x) *100
+#define FUNC(x) std::sin(x) *300
 #define SPEED 10000
 
 const double dt = 0.01;
@@ -33,7 +33,7 @@ void calc_change(int x){
 
 // executes every dt
 void render(psm_window* w){
-	w->draw_graph(joints);
+	//w->draw_graph(joints);
 	for(auto p : joints)
 		w->draw_circle(p, 2);
 
