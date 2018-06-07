@@ -6,20 +6,25 @@
 
 template <int S>
 class grid{
-	std::array<std::array<double, S>, S> arr;
 
 public:
-	double& operator()(int x, int y){
-		x = wrap_clamp(x);
-		y = wrap_clamp(y);
-		return arr[x][y];
+	std::array<double, S*S> arr;
+	double& at(int x, int y){
+		return arr[x*S +y];
 	}
 
-	void operator()(int x, int y, double set){
-		this->operator()(x, y) = set;
+	inline double& operator()(int x, int y){
+		return at(x, y);
+	}
+
+	inline void operator()(int x, int y, double set){
+		at(x, y) = set;
 	}
 
 private:
+	inline bool in_bounds(int x){
+		return x >= 0 && x < S;
+	}
 	inline int wrap_clamp(int val){
 		return (val >= S) ? 0 : (val < 0) ? S-1 : val;
 	}
