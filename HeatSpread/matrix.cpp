@@ -1,5 +1,4 @@
 #include "matrix.h"
-#include <iostream>
 
 void swap(double& x, double& y){
 	double temp = x;
@@ -9,26 +8,38 @@ void swap(double& x, double& y){
 
 matrix::matrix(size_t size):
 	size(size),
-	vec(size*size),
-	sol(size)
+	grid(size*size),
+	sols(size)
 {}
 
 matrix::matrix(size_t size, const std::vector<double>& input):
 	size(size),
-	vec(input),
-	sol(size)
+	grid(input),
+	sols(size)
 {}
 
-bool matrix::is_valid(size_t x, size_t y){
+bool matrix::is_valid(size_t x, size_t y) const{
 	return 0 <= x && x < size && 0 <= y && y < size;
 }
 
 double& matrix::at(int x, int y){
-	return vec[offset(x, y)];
+	return grid[offset(x, y)];
 }
 
 const double& matrix::at(int x, int y) const{
-	return vec[offset(x, y)];
+	return grid[offset(x, y)];
+}
+
+double& matrix::sol(int i){
+	return sols[i];
+}
+
+const double& matrix::sol(int i) const{
+	return sols[i];
+}
+
+const std::vector<double>& matrix::get_sols() const{
+	return sols;
 }
 
 double& matrix::operator()(int x, int y){
@@ -58,41 +69,23 @@ matrix matrix::operator/(double val) const{
 void matrix::swap_row(int row1, int row2){
 	for(size_t i = 0; i < size; i++)
 		swap(at(row1, i), at(row2, i));
-	swap(sol[row1], sol[row2]);
+	swap(sol(row1), sol(row2));
 }
 
 void matrix::mul_row(int row, double mul){
 	for(size_t i = 0; i < size; i++)
 		at(row, i) *= mul;
-	sol[row] *= mul;
+	sol(row) *= mul;
 }
 
 void matrix::add_row(int to, int row, double mul){
 	for(size_t i = 0; i < size; i++)
 		at(to, i) += at(row, i) *mul;
-	sol[to] += sol[row] *mul;
+	sol(to) += sol(row) *mul;
 }
 
 void matrix::flip(){
-	size_t half = size /2;
-	for(size_t row = 0; row < half; row++)
-		swap_row(row, size -row -1);
-}
-
-double matrix::det() const{
-	return det(*this);
-}
-
-double matrix::qdet() const{
-	return qdet(*this);
-}
-
-matrix matrix::sub(size_t skip_row, size_t skip_col) const{
-	return sub(*this, skip_row, skip_col);
-}
-
-matrix matrix::adj() const{
-	return adj(*this);
+	flip(*this);
 }
 
 void matrix::transpose(){
@@ -107,70 +100,16 @@ int matrix::offset(int x, int y) const{
 	return x*size +y;
 }
 
-double matrix::det(const matrix& m){
-	if(m.size == 1)
-		return m(0, 0);
-
-	double result = 0;
-	int dir = 1;
-
-	for(size_t i = 0; i < m.size; i++){
-		result += m(0, i) *dir *det(sub(m, 0, i));
-		dir = -dir;
-	}
-
-	return result;
-}
-
-double matrix::qdet(const matrix& m){
-	matrix simm(m);
-	double result = 1.0;
-
-	for(size_t row = 0; row < m.size; row++){
-
-		for(size_t next = row +1; next < m.size; next++){
-			double val = -simm(next, row) /simm(row, row);
-			simm.add_row(next, row, val);
-		}
-
-		result *= simm(row, row);
-	}
-
-	return result;
-}
-
-matrix matrix::sub(const matrix& m, size_t skip_row, size_t skip_col){
-	const size_t size = m.size -1;
-	matrix subm(size);
-
-	for(size_t row = 0; row < m.size; row++)
-		if(row != skip_row)
-		for(size_t col = 0; col < m.size; col++)
-			if(col != skip_col)
-			subm(row -(row > skip_row), col -(col > skip_col)) = m(row, col);
-
-	return subm;
-}
-
-matrix matrix::adj(const matrix& m){
-	matrix adjm(m.size);
-	int posit = -1;
-	for(size_t i = 0; i < m.size; i++)
-		for(size_t j = 0; j < m.size; j++)
-			adjm(i, j) = det(sub(m, i, j)) *(posit = -posit);
-	return adjm;
+void matrix::flip(matrix& m){
+	size_t half = m.size /2;
+	for(size_t row = 0; row < half; row++)
+		m.swap_row(row, m.size -row -1);
 }
 
 void matrix::transpose(matrix& m){
-	// TODO: quickfix - fix the quickfix
-	matrix transposed(m);
 	for(size_t row = 0; row < m.size; row++)
-		for(size_t col = 0; col < m.size; col++)
-			transposed(col, row) = m(row, col);
-
-	for(size_t row = 0; row < m.size; row++)
-		for(size_t col = 0; col < m.size; col++)
-			m(row, col) = transposed(row, col);
+		for(size_t col = row; col < m.size; col++)
+			swap(m(row, col), m(col, row));
 }
 
 void matrix::decompose(matrix& m){
@@ -201,7 +140,7 @@ std::ostream& operator<<(std::ostream& os, const matrix& m){
 		os << "| ";
 		for(size_t col = 0; col < m.size; col++)
 			os << m(row, col) << ' ';
-		os << "| " << m.sol[row] << std::endl;
+		os << "| " << m.sol(row) << std::endl;
 	}
 	return os;
 }

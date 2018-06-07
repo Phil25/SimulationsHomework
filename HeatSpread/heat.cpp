@@ -57,7 +57,7 @@ void initial_state(){
 
 void gen_matrix(matrix& m){
 	int left = 0, right = 0;
-	for(size_t row = 0; row < m.size; row++){
+	for(size_t row = 0; row < matrix_size; row++){
 		m(row, row) = -4;
 
 		// bottom neighbour
@@ -79,32 +79,40 @@ void gen_matrix(matrix& m){
 }
 
 void gen_solutions(matrix& m){
-	for(size_t i = 0; i < m.size; i += sizemin2)
-		m.sol[i] -= HEAT_LEFT;
+	for(size_t i = 0; i < matrix_size; i += sizemin2)
+		m.sol(i) -= HEAT_LEFT;
 
 	for(size_t i = 0; i < sizemin2; i++)
-		m.sol[i] -= HEAT_TOP;
+		m.sol(i) -= HEAT_TOP;
 
-	for(size_t i = sizemin2 -1; i < m.size; i += sizemin2)
-		m.sol[i] -= HEAT_RIGHT;
+	for(size_t i = sizemin2 -1; i < matrix_size; i += sizemin2)
+		m.sol(i) -= HEAT_RIGHT;
 
-	for(size_t i = m.size -sizemin2; i < m.size; i++)
-		m.sol[i] -= HEAT_BOTTOM;
+	for(size_t i = matrix_size -sizemin2; i < matrix_size; i++)
+		m.sol(i) -= HEAT_BOTTOM;
 }
 
 void last_state(){
 	matrix m(matrix_size);
+
+	// generate the matrix
 	gen_matrix(m);
 	gen_solutions(m);
+
+	// find solutions
 	m.decompose();
 
-	matrix sols(sizemin2, m.sol);
+	// get solutions as a matrix
+	matrix sols(sizemin2, m.get_sols());
+
+	// transform it to a different coordinate system
 	sols.flip();
 	sols.transpose();
 
-	for(int x = 1; x < sizemin1; x++)
-		for(int y = 1; y < sizemin1; y++)
-			plate(x, y) = sols(x -1, y -1);
+	// copy the value to the plate
+	for(size_t row = 0; row < sizemin2; row++)
+		for(size_t col = 0; col < sizemin2; col++)
+			plate(row +1, col +1) = sols(row, col);
 }
 
 int main(int argc, char* argv[]){
